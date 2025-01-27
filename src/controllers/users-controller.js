@@ -1,24 +1,19 @@
-const AppError = require("../utils/AppError")
 const sqliteConnection = require("../database/sqlite/index.js")
+const AppError = require("../utils/AppError")
 const {hash, compare} = require("bcryptjs")
 const knex = require("../database/knex/index.js")
 const authConfig = require("../configs/auth.js")
 const { sign } = require("jsonwebtoken");
+const UserRepository = require("../repositories/UserRepository.js")
+const UserCreateService = require("../services/UserCreateService.js")
 
 class UsersController {
    async  create(request, response) {
    const {name, email, password} = request.body
-   
-   const database = await sqliteConnection()
-   const checkUserExist = await database.get("SELECT * FROM users WHERE email = (?)", [email])
 
-   if(checkUserExist) {
-      throw new AppError("Esse email já está em Cadastrado.")
-   }
-
-   const hashPassword =  await hash(password, 8)
-
-   await database.run("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", [name, email, hashPassword])
+   const userRepository = new UserRepository()
+   const userCreateService = new UserCreateService(userRepository)
+   await userCreateService.execute({name, email, password})
 
    return response.status(201).json() 
 }

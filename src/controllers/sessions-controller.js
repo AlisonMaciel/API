@@ -26,9 +26,10 @@ class SessionsController {
         expiresIn
        })
        
+       delete user.password
 
        return response.json({user, token})
-    }
+    } 
 }
 
 module.exports= SessionsController

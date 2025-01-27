@@ -27,7 +27,7 @@ app.use((error, request, response, next) => {
 
     return response.status(500).json({      
         status: "error",
-        message: "erro no servidor",
+        message: "erro no servidor", 
     });
 });
 
